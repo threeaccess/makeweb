@@ -1,0 +1,380 @@
+/* ============================================
+   INDEX.CSS - Index Page Specific Styles
+   Table listings, stats bar, note cards
+   Version: 1.0
+   ============================================ */
+
+/* ============================================
+   Index Page Container
+   ============================================ */
+
+[data-page-type="index"] .container {
+  max-width: 1000px;
+}
+
+/* ============================================
+   Stats Bar (Index Page Only)
+   ============================================ */
+
+.stats-bar {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 20px 40px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-light);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-primary);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.stat-icon:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ============================================
+   Table Container
+   ============================================ */
+
+.table-wrapper {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.table-header {
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.table-title svg {
+  width: 20px;
+  height: 20px;
+  color: var(--accent-primary);
+}
+
+.last-updated {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.last-updated svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ============================================
+   Table Styles
+   ============================================ */
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+th {
+  background: var(--bg-secondary);
+  padding: 16px 32px;
+  text-align: left;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-medium);
+  white-space: nowrap;
+}
+
+th svg {
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+  margin-left: 4px;
+  opacity: 0.5;
+}
+
+td {
+  padding: 20px 32px;
+  border-bottom: 1px solid var(--border-light);
+  transition: all var(--transition-fast);
+}
+
+tbody tr {
+  transition: all var(--transition-fast);
+}
+
+tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+tbody tr:hover td {
+  border-bottom-color: var(--border-medium);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ============================================
+   Note Row Components
+   ============================================ */
+
+.note-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.note-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.note-icon svg {
+  width: 18px;
+  height: 18px;
+  color: var(--accent-primary);
+}
+
+.note-link {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  display: block;
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  position: relative;
+}
+
+.note-link:hover {
+  color: var(--accent-primary);
+}
+
+.note-link::after {
+  content: '→';
+  opacity: 0;
+  margin-left: 0;
+  transition: all var(--transition-fast);
+}
+
+.note-link:hover::after {
+  opacity: 1;
+  margin-left: 6px;
+}
+
+.note-path {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  transition: all var(--transition-fast);
+}
+
+tr:hover .note-path {
+  border-color: var(--border-medium);
+  background: var(--surface);
+}
+
+.note-date {
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.note-date svg {
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   Empty State
+   ============================================ */
+
+.empty-state {
+  padding: 80px 32px;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  border: 2px dashed var(--border-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.empty-icon svg {
+  width: 36px;
+  height: 36px;
+}
+
+.empty-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.empty-text {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (max-width: 768px) {
+  .stats-bar {
+    padding: 16px 24px;
+    gap: 20px;
+    overflow-x: auto;
+  }
+
+  .table-header {
+    padding: 20px 24px;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  th, td {
+    padding: 16px 24px;
+  }
+
+  .note-link {
+    max-width: 200px;
+  }
+
+  .note-path {
+    max-width: 150px;
+    font-size: 0.75rem;
+  }
+
+  .stat-item {
+    flex-shrink: 0;
+  }
+}
+
+/* ============================================
+   Wide Mode Responsive Adjustments
+   ============================================ */
+
+[data-width="wide"] .stats-bar {
+  justify-content: flex-start;
+  gap: 48px;
+}
+
+[data-width="wide"] .table-wrapper {
+  margin: 0 -24px;
+  border-radius: 0;
+}
+
+@media (max-width: 768px) {
+  [data-width="wide"] .container {
+    padding: 24px 16px;
+  }
+  
+  [data-width="wide"] .table-wrapper {
+    margin: 0 -16px;
+  }
+  
+  [data-width="wide"] .stats-bar {
+    gap: 20px;
+    padding: 16px;
+  }
+}

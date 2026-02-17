@@ -1,0 +1,568 @@
+/* ============================================
+   CONTENT.CSS - Content Page Specific Styles
+   Documentation pages with TOC and navigation
+   Version: 1.0
+   ============================================ */
+
+/* ============================================
+   Breadcrumb Navigation
+   ============================================ */
+
+.page-nav {
+  margin-bottom: 24px;
+  padding: 12px 0;
+}
+
+.page-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.page-nav a::before {
+  content: '←';
+  font-size: 1.1em;
+  transition: transform var(--transition-fast);
+}
+
+.page-nav a:hover {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateX(-2px);
+}
+
+.page-nav a:hover::before {
+  transform: translateX(-4px);
+}
+
+/* ============================================
+   Table of Contents
+   ============================================ */
+
+.toc-wrapper {
+  margin-bottom: 32px;
+}
+
+.toc-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+}
+
+.toc-header {
+  padding: 20px 24px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toc-header svg {
+  width: 18px;
+  height: 18px;
+  color: var(--accent-primary);
+}
+
+.toc-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.toc {
+  padding: 20px 24px;
+  font-size: 0.9375rem;
+}
+
+.toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.toc li {
+  margin: 8px 0;
+}
+
+.toc li li {
+  margin-left: 20px;
+  margin-top: 6px;
+}
+
+.toc a {
+  color: var(--text-tertiary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  display: inline-block;
+  padding: 2px 0;
+  border-bottom: none;
+}
+
+.toc a::after {
+  display: none;
+}
+
+.toc a:hover {
+  color: var(--accent-primary);
+  transform: translateX(4px);
+}
+
+/* TOC Level Indicators */
+.toc > ul > li > a {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.toc > ul > li > ul > li > a {
+  font-weight: 500;
+  font-size: 0.95em;
+}
+
+.toc > ul > li > ul > li > ul > li > a {
+  font-weight: 400;
+  font-size: 0.9em;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   Content Wrapper
+   ============================================ */
+
+.content-wrapper {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+}
+
+[data-page-type="content"] main {
+  padding: 40px 48px;
+}
+
+/* ============================================
+   Article Typography
+   ============================================ */
+
+article {
+  max-width: 100%;
+}
+
+article h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  background: var(--gradient-header);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+article h2 {
+  font-size: 1.75rem;
+  letter-spacing: -0.01em;
+  border-bottom: 2px solid var(--border-light);
+  padding-bottom: 0.75rem;
+  margin-top: 3rem;
+  margin-bottom: 1.25rem;
+}
+
+article h3 {
+  font-size: 1.375rem;
+  color: var(--text-secondary);
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+article h4 {
+  font-size: 1.125rem;
+  color: var(--text-tertiary);
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+article p {
+  margin-bottom: 1.25rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+article a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+article a:hover {
+  color: var(--accent-hover);
+  border-bottom-color: var(--accent-hover);
+}
+
+article strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+article em {
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   Article Lists
+   ============================================ */
+
+article ul, article ol {
+  margin-bottom: 1.25rem;
+  padding-left: 1.75rem;
+}
+
+article li {
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+article li::marker {
+  color: var(--accent-primary);
+}
+
+article ul ul, article ol ol, article ul ol, article ol ul {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ============================================
+   Article Tables
+   ============================================ */
+
+article table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 1.5rem 0;
+  font-size: 0.9375rem;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+}
+
+article th, article td {
+  padding: 14px 18px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-light);
+}
+
+article th {
+  background: var(--bg-secondary);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary);
+}
+
+article td {
+  color: var(--text-secondary);
+}
+
+article tr:last-child td {
+  border-bottom: none;
+}
+
+article tr:hover td {
+  background: var(--surface-hover);
+}
+
+article td code {
+  font-size: 0.8em;
+}
+
+/* ============================================
+   Article Code Blocks
+   ============================================ */
+
+article pre {
+  background: var(--code-bg);
+  color: var(--code-ink);
+  padding: 20px 24px;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-medium);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+article pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+  border: none;
+}
+
+article code {
+  background: var(--bg-secondary);
+  color: var(--accent-primary);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  border: 1px solid var(--border-light);
+  font-size: 0.875em;
+}
+
+/* Syntax highlighting colors */
+article .codehilite .k { color: #ff79c6; } /* Keyword */
+article .codehilite .s { color: #f1fa8c; } /* String */
+article .codehilite .c { color: #6272a4; } /* Comment */
+article .codehilite .n { color: #f8f8f2; } /* Name */
+article .codehilite .o { color: #ff79c6; } /* Operator */
+
+/* ============================================
+   Article Blockquotes
+   ============================================ */
+
+article blockquote {
+  margin: 1.5rem 0;
+  padding: 20px 24px;
+  border-left: 4px solid var(--accent-primary);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+article blockquote p {
+  margin-bottom: 0.75rem;
+}
+
+article blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+article blockquote cite {
+  display: block;
+  margin-top: 12px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-style: normal;
+}
+
+article blockquote cite::before {
+  content: '— ';
+}
+
+/* ============================================
+   Article Horizontal Rules
+   ============================================ */
+
+article hr {
+  border: none;
+  height: 2px;
+  background: var(--gradient-accent);
+  margin: 2.5rem 0;
+  border-radius: 1px;
+  opacity: 0.5;
+}
+
+/* ============================================
+   Article Images
+   ============================================ */
+
+article img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  margin: 1.5rem 0;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (max-width: 768px) {
+  .page-nav {
+    margin-bottom: 16px;
+  }
+
+  .page-nav a {
+    font-size: 0.875rem;
+    padding: 6px 12px;
+  }
+
+  [data-page-type="content"] main {
+    padding: 28px 24px;
+  }
+
+  article h1 {
+    font-size: 1.5rem;
+  }
+
+  article h2 {
+    font-size: 1.375rem;
+  }
+
+  article h3 {
+    font-size: 1.125rem;
+  }
+
+  article pre {
+    padding: 16px 20px;
+    font-size: 0.8125rem;
+  }
+
+  article th, article td {
+    padding: 12px 14px;
+    font-size: 0.875rem;
+  }
+
+  .toc {
+    padding: 16px 20px;
+  }
+
+  .toc li li {
+    margin-left: 16px;
+  }
+}
+
+/* ============================================
+   Wide Mode Responsive Adjustments
+   ============================================ */
+
+[data-width="wide"] article {
+  max-width: 100%;
+}
+
+[data-width="wide"] article p {
+  max-width: 75ch; /* Optimal reading width for paragraphs */
+}
+
+[data-width="wide"] pre {
+  max-width: 100%;
+}
+
+[data-width="wide"] .content-wrapper {
+  padding: 40px 48px;
+}
+
+[data-width="wide"] .container {
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  grid-template-rows: auto auto 1fr;
+  grid-template-areas:
+    "nav nav"
+    "header header"
+    "content toc";
+  gap: 0 48px;
+  padding: 48px;
+}
+
+[data-width="wide"] .page-nav {
+  grid-area: nav;
+  margin-bottom: 24px;
+}
+
+[data-width="wide"] .header-wrapper {
+  grid-area: header;
+  margin-bottom: 32px;
+}
+
+[data-width="wide"] .toc-wrapper {
+  grid-area: toc;
+  max-width: 350px;
+  width: 350px;
+  margin: 0;
+}
+
+[data-width="wide"] .toc-card {
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+[data-width="wide"] .content-wrapper {
+  grid-area: content;
+  width: 100%;
+}
+
+[data-width="wide"] main {
+  padding: 40px 48px;
+}
+
+@media (max-width: 1200px) {
+  /* On medium screens, revert to normal layout */
+  [data-width="wide"] .container {
+    display: block;
+    padding: 48px 24px;
+  }
+  
+  [data-width="wide"] .toc-wrapper {
+    position: relative;
+    top: auto;
+    right: auto;
+    max-width: 100%;
+    width: 100%;
+    margin-bottom: 32px;
+  }
+  
+  [data-width="wide"] .toc-card {
+    position: relative;
+    top: auto;
+    max-height: none;
+  }
+  
+  [data-width="wide"] .content-wrapper {
+    margin-top: 0;
+  }
+  
+  [data-width="wide"] main {
+    padding: 28px 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  [data-width="wide"] .container {
+    padding: 24px 16px;
+    display: block;
+  }
+  
+  [data-width="wide"] .content-wrapper {
+    padding: 28px 24px;
+  }
+  
+  [data-width="wide"] .toc-wrapper {
+    max-width: 100%;
+    width: 100%;
+    float: none;
+    margin-left: 0;
+    margin-bottom: 32px;
+  }
+  
+  [data-width="wide"] .toc-card {
+    max-height: none;
+  }
+}

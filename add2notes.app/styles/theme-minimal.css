@@ -1,0 +1,240 @@
+/* ============================================
+   THEME-MINIMAL.CSS
+   Minimal clean theme - Focus on readability
+   Version: 1.0
+   ============================================ */
+
+/* ============================================
+   Light Mode - Minimal Theme
+   ============================================ */
+
+[data-theme-name="minimal"] {
+  /* Neutral, minimal color palette */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  
+  --surface: #ffffff;
+  --surface-elevated: #ffffff;
+  --surface-hover: rgba(0, 0, 0, 0.02);
+  
+  /* High contrast text */
+  --text-primary: #212529;
+  --text-secondary: #495057;
+  --text-tertiary: #6c757d;
+  --text-muted: #adb5bd;
+  
+  /* Single accent color - subtle blue */
+  --accent-primary: #0056b3;
+  --accent-secondary: #007bff;
+  --accent-tertiary: #4dabf7;
+  --accent-hover: #004494;
+  
+  /* No gradients - solid colors only */
+  --gradient-header: none;
+  --gradient-accent: none;
+  
+  /* Subtle borders */
+  --border-light: #dee2e6;
+  --border-medium: #ced4da;
+  --border-strong: #adb5bd;
+  
+  /* Minimal shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-lg: 0 4px 6px rgba(0,0,0,0.05);
+  --shadow-xl: 0 8px 16px rgba(0,0,0,0.05);
+  --shadow-glow: none;
+}
+
+/* ============================================
+   Dark Mode - Minimal Theme
+   ============================================ */
+
+[data-theme-name="minimal"][data-color-scheme="dark"] {
+  --bg-primary: #1a1d21;
+  --bg-secondary: #212529;
+  --bg-tertiary: #2d333b;
+  
+  --surface: #212529;
+  --surface-elevated: #2d333b;
+  --surface-hover: rgba(255, 255, 255, 0.03);
+  
+  --text-primary: #f8f9fa;
+  --text-secondary: #e9ecef;
+  --text-tertiary: #ced4da;
+  --text-muted: #adb5bd;
+  
+  /* Slightly brighter accent for dark mode */
+  --accent-primary: #4dabf7;
+  --accent-secondary: #74c0fc;
+  --accent-tertiary: #a5d8ff;
+  --accent-hover: #339af0;
+  
+  --border-light: #373d43;
+  --border-medium: #495057;
+  --border-strong: #6c757d;
+  
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-md: 0 2px 4px rgba(0,0,0,0.2);
+  --shadow-lg: 0 4px 6px rgba(0,0,0,0.2);
+  --shadow-xl: 0 8px 16px rgba(0,0,0,0.2);
+  --shadow-glow: none;
+}
+
+/* ============================================
+   Minimal Theme Specific Overrides
+   ============================================ */
+
+[data-theme-name="minimal"] .header-accent-bar {
+  background: var(--accent-primary);
+}
+
+[data-theme-name="minimal"] .header-accent-bar::after {
+  display: none;
+}
+
+[data-theme-name="minimal"] .gradient-title {
+  background: none;
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+  background-clip: initial;
+  color: var(--text-primary);
+}
+
+[data-theme-name="minimal"] .header-card {
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme-name="minimal"][data-color-scheme="dark"] .header-card {
+  box-shadow: var(--shadow-lg);
+  animation: none;
+}
+
+[data-theme-name="minimal"] .header-badge {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
+}
+
+[data-theme-name="minimal"] a::after {
+  display: none;
+}
+
+[data-theme-name="minimal"] a:hover {
+  border-bottom-color: transparent;
+  text-decoration: underline;
+}
+
+[data-theme-name="minimal"] .toc-header {
+  background: var(--bg-secondary);
+}
+
+[data-theme-name="minimal"] .toc a:hover {
+  transform: none;
+  text-shadow: none;
+}
+
+[data-theme-name="minimal"] blockquote {
+  background: var(--bg-secondary);
+  border-left: 3px solid var(--accent-primary);
+}
+
+[data-theme-name="minimal"] pre {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-left: 3px solid var(--accent-primary);
+  color: var(--text-primary); /* Ensures contrast: dark on light, light on dark */
+}
+
+[data-theme-name="minimal"] code {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  color: var(--text-primary); /* Ensures contrast: dark on light, light on dark */
+}
+
+[data-theme-name="minimal"] article table {
+  box-shadow: none;
+  border: 1px solid var(--border-light);
+}
+
+[data-theme-name="minimal"] hr {
+  background: var(--border-medium);
+  opacity: 1;
+}
+
+[data-theme-name="minimal"] .page-nav a:hover {
+  transform: none;
+}
+
+[data-theme-name="minimal"] .page-nav a:hover::before {
+  transform: none;
+}
+
+[data-theme-name="minimal"] .stat-icon {
+  background: var(--bg-secondary);
+}
+
+[data-theme-name="minimal"] .stat-icon:hover {
+  background: var(--bg-tertiary);
+  transform: none;
+}
+
+[data-theme-name="minimal"] .note-icon {
+  background: var(--bg-secondary);
+}
+
+[data-theme-name="minimal"] tr:hover .note-icon {
+  background: var(--bg-tertiary);
+  transform: none;
+}
+
+[data-theme-name="minimal"] ::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+}
+
+[data-theme-name="minimal"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+[data-theme-name="minimal"] *:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+[data-theme-name="minimal"] ::selection {
+  background: rgba(0, 86, 179, 0.15);
+}
+
+[data-theme-name="minimal"][data-color-scheme="dark"] ::selection {
+  background: rgba(77, 171, 247, 0.25);
+}
+
+[data-theme-name="minimal"] tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+[data-theme-name="minimal"] .header-badge,
+[data-theme-name="minimal"] .note-icon,
+[data-theme-name="minimal"] .stat-icon,
+[data-theme-name="minimal"] .toc-header,
+[data-theme-name="minimal"] blockquote,
+[data-theme-name="minimal"] pre {
+  background: var(--bg-secondary);
+}
+
+[data-theme-name="minimal"] h1,
+[data-theme-name="minimal"] h2,
+[data-theme-name="minimal"] h3,
+[data-theme-name="minimal"] h4,
+[data-theme-name="minimal"] h5,
+[data-theme-name="minimal"] h6 {
+  font-weight: 600;
+}
+
+[data-theme-name="minimal"] h2 {
+  border-bottom-width: 1px;
+}

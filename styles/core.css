@@ -1,0 +1,638 @@
+/* ============================================
+   CORE.CSS - Foundation Layer
+   CSS Variables, Reset, Utilities, Theme JS
+   Version: 1.0
+   ============================================ */
+
+/* ============================================
+   SECTION 1: CSS Custom Properties
+   ============================================ */
+
+:root {
+  /* Light Mode - Default */
+  
+  /* Background Colors */
+  --bg-primary: #faf9f7;
+  --bg-secondary: #f5f3f0;
+  --bg-tertiary: #edeae5;
+  
+  /* Surface Colors */
+  --surface: #ffffff;
+  --surface-elevated: #ffffff;
+  --surface-hover: rgba(0, 0, 0, 0.02);
+  
+  /* Text Colors */
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a4a4a;
+  --text-tertiary: #737373;
+  --text-muted: #9a9a9a;
+  
+  /* Accent Colors - Will be overridden by theme */
+  --accent-primary: #6366f1;
+  --accent-secondary: #8b5cf6;
+  --accent-tertiary: #ec4899;
+  --accent-hover: #4f46e5;
+  
+  /* Gradients - Will be overridden by theme */
+  --gradient-header: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-accent: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  
+  /* Border Colors */
+  --border-light: #e8e5e0;
+  --border-medium: #d9d5ce;
+  --border-strong: #c9c4bc;
+  
+  /* Code Block Colors */
+  --code-bg: #1a1a2e;
+  --code-ink: #f8f8f2;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+  --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.15);
+  
+  /* Typography */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", Monaco, monospace;
+  
+  /* Spacing Scale */
+  --space-xs: 0.25rem;   /* 4px */
+  --space-sm: 0.5rem;    /* 8px */
+  --space-md: 1rem;      /* 16px */
+  --space-lg: 1.5rem;    /* 24px */
+  --space-xl: 2rem;      /* 32px */
+  --space-2xl: 3rem;     /* 48px */
+  
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Mode - Base overrides (themes will customize further) */
+[data-theme="dark"] {
+  --bg-primary: #0a0a0b;
+  --bg-secondary: #121214;
+  --bg-tertiary: #1a1a1d;
+  
+  --surface: #18181b;
+  --surface-elevated: #1f1f23;
+  --surface-hover: rgba(255, 255, 255, 0.03);
+  
+  --text-primary: #fafafa;
+  --text-secondary: #e4e4e7;
+  --text-tertiary: #a1a1aa;
+  --text-muted: #71717a;
+  
+  --code-bg: #0d0d12;
+  --code-ink: #f8f8f2;
+  
+  --border-light: #27272a;
+  --border-medium: #3f3f46;
+  --border-strong: #52525b;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.7), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 40px rgba(129, 140, 248, 0.2);
+}
+
+/* ============================================
+   SECTION 2: CSS Reset & Base Styles
+   ============================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  min-height: 100vh;
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+/* ============================================
+   SECTION 3: Background Effects
+   ============================================ */
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(ellipse at top left, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(236, 72, 153, 0.06) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+[data-theme="dark"] body::before {
+  background: 
+    radial-gradient(ellipse at top left, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(236, 72, 153, 0.08) 0%, transparent 50%);
+}
+
+/* ============================================
+   SECTION 4: Utility Classes
+   ============================================ */
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  transition: max-width var(--transition-base);
+}
+
+/* Wide layout mode */
+[data-width="wide"] .container,
+body.width-wide .container {
+  max-width: 100%;
+  padding: 48px 48px;
+}
+
+/* Index page wide */
+[data-width="wide"][data-page-type="index"] .container {
+  max-width: 100%;
+}
+
+/* Smooth transition for width changes */
+.container,
+.container * {
+  transition: max-width var(--transition-base), padding var(--transition-base);
+}
+
+/* ============================================
+   Width Toggle Button
+   ============================================ */
+
+.width-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-medium);
+  background: var(--bg-secondary);
+  border-radius: 100px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.width-toggle:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  background: var(--surface);
+}
+
+.width-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Toggle icon states */
+.width-toggle .icon-expand,
+body.width-wide .width-toggle .icon-collapse,
+[data-width="wide"] .width-toggle .icon-collapse {
+  display: block;
+}
+
+.width-toggle .icon-collapse,
+body.width-wide .width-toggle .icon-expand,
+[data-width="wide"] .width-toggle .icon-expand {
+  display: none;
+}
+
+/* ============================================
+   SECTION 5: Typography
+   ============================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2.25rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-top: 0;
+}
+
+h2 {
+  font-size: 1.75rem;
+  letter-spacing: -0.01em;
+  border-bottom: 2px solid var(--border-light);
+  padding-bottom: 0.75rem;
+  margin-top: 3rem;
+}
+
+h3 {
+  font-size: 1.375rem;
+  color: var(--text-secondary);
+  margin-top: 2rem;
+}
+
+h4 {
+  font-size: 1.125rem;
+  color: var(--text-tertiary);
+}
+
+p {
+  margin-bottom: 1.25rem;
+  color: var(--text-secondary);
+}
+
+a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  border-bottom: 1px solid transparent;
+}
+
+a:hover {
+  color: var(--accent-hover);
+  border-bottom-color: var(--accent-hover);
+}
+
+/* ============================================
+   SECTION 6: Lists
+   ============================================ */
+
+ul, ol {
+  margin-bottom: 1.25rem;
+  padding-left: 1.75rem;
+}
+
+li {
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+li::marker {
+  color: var(--accent-primary);
+}
+
+/* ============================================
+   SECTION 7: Shared Components
+   ============================================ */
+
+/* Header Card */
+.header-wrapper {
+  position: relative;
+  margin-bottom: 32px;
+}
+
+.header-card {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl), var(--shadow-glow);
+  overflow: hidden;
+  position: relative;
+}
+
+.header-accent-bar {
+  height: 4px;
+  background: var(--gradient-accent);
+  position: relative;
+}
+
+.header-accent-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.header-content {
+  padding: 32px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.header-title-group {
+  flex: 1;
+}
+
+.header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.header-badge svg {
+  width: 14px;
+  height: 14px;
+  color: var(--accent-primary);
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--text-tertiary);
+  font-weight: 400;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-medium);
+  border-radius: 100px;
+  padding: 4px;
+  display: flex;
+  gap: 4px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.theme-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 100px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  color: var(--text-muted);
+}
+
+.theme-btn:hover {
+  color: var(--text-secondary);
+}
+
+.theme-btn.active {
+  background: var(--surface);
+  color: var(--accent-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Title with Gradient */
+.gradient-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 8px;
+  background: var(--gradient-header);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================
+   SECTION 8: Code Blocks
+   ============================================ */
+
+/* 
+   IMPORTANT FOR THEME DEVELOPERS:
+   When a theme overrides pre or code background colors to use light colors
+   (like var(--bg-secondary) or var(--bg-tertiary)), it MUST also specify 
+   text color to ensure contrast. Use var(--text-primary) which automatically
+   provides dark text on light backgrounds (light mode) and light text on 
+   dark backgrounds (dark mode).
+   
+   Example:
+   [data-theme-name="your-theme"] pre {
+     background: var(--bg-secondary);
+     color: var(--text-primary); // Ensures proper contrast
+   }
+*/
+
+code, pre {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
+pre {
+  background: var(--code-bg);
+  color: var(--code-ink);
+  padding: 20px 24px;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-medium);
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+code {
+  background: var(--bg-secondary);
+  color: var(--accent-primary);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  border: 1px solid var(--border-light);
+}
+
+/* ============================================
+   SECTION 9: Blockquotes
+   ============================================ */
+
+blockquote {
+  margin: 1.5rem 0;
+  padding: 20px 24px;
+  border-left: 4px solid var(--accent-primary);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================
+   SECTION 10: Horizontal Rule
+   ============================================ */
+
+hr {
+  border: none;
+  height: 2px;
+  background: var(--gradient-accent);
+  margin: 2.5rem 0;
+  border-radius: 1px;
+  opacity: 0.5;
+}
+
+/* ============================================
+   SECTION 11: Responsive Design
+   ============================================ */
+
+@media (max-width: 768px) {
+  .container {
+    padding: 24px 16px;
+  }
+
+  .header-content {
+    padding: 24px 20px;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .gradient-title {
+    font-size: 1.75rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  h2 {
+    font-size: 1.375rem;
+  }
+
+  h3 {
+    font-size: 1.125rem;
+  }
+
+  pre {
+    padding: 16px 20px;
+    font-size: 0.8125rem;
+  }
+
+  th, td {
+    padding: 12px 14px;
+    font-size: 0.875rem;
+  }
+}
+
+/* ============================================
+   SECTION 12: Accessibility & Extras
+   ============================================ */
+
+/* Focus States */
+*:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background: rgba(99, 102, 241, 0.2);
+  color: var(--text-primary);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ============================================
+   SECTION 13: Theme Switching JavaScript
+   ============================================ */
+
+/* This CSS file includes the theme toggle styles.
+   The actual JavaScript for theme switching is embedded in HTML templates
+   to ensure it works immediately without external JS files. */
+
+/* Theme attribute styles */
+[data-theme="light"] {
+  /* Light mode is default in :root */
+}
+
+[data-theme="dark"] {
+  /* Dark mode overrides are defined above */
+}
+
+/* Transition smoothness when switching themes */
+[data-theme] {
+  transition: background-color var(--transition-base), 
+              color var(--transition-base),
+              border-color var(--transition-base),
+              box-shadow var(--transition-base);
+}
+
+[data-theme] * {
+  transition: background-color var(--transition-base), 
+              color var(--transition-base),
+              border-color var(--transition-base);
+}
+
+/* Disable transitions on page load to prevent flash */
+.no-transition,
+.no-transition * {
+  transition: none !important;
+}

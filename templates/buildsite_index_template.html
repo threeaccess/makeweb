@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" data-theme-name="${default_theme}" data-page-type="index">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${title}</title>
+
+  <!-- Fallback styles for graceful degradation -->
+  <style>
+    :root { --fb-bg: #faf9f7; --fb-text: #1a1a1a; }
+    [data-color-scheme="dark"] { --fb-bg: #0a0a0b; --fb-text: #fafafa; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--fb-bg); color: var(--fb-text); line-height: 1.6; margin: 0; padding: 20px; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+    th { background: #f5f5f5; font-weight: 600; }
+    a { color: #6366f1; text-decoration: none; }
+
+    /* Search input */
+    .search-wrapper { margin-bottom: 1rem; }
+    .search-input {
+      width: 100%;
+      padding: 0.6rem 1rem 0.6rem 2.4rem;
+      font-size: 0.95rem;
+      border: 1px solid var(--border-color, #ddd);
+      border-radius: 8px;
+      background: var(--fb-bg);
+      color: var(--fb-text);
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: #6366f1; }
+    .search-wrapper { position: relative; }
+    .search-icon {
+      position: absolute;
+      left: 0.7rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1rem;
+      height: 1rem;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* Directory header rows */
+    .dir-header td {
+      font-weight: 600;
+      padding-top: 1.2rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border-color, #ddd);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      opacity: 0.7;
+    }
+    .dir-header td svg {
+      width: 1em;
+      height: 1em;
+      vertical-align: -0.15em;
+      margin-right: 0.3em;
+    }
+
+    /* File rows */
+    .file-row td svg {
+      width: 1em;
+      height: 1em;
+      vertical-align: -0.15em;
+      margin-right: 0.4em;
+      opacity: 0.5;
+    }
+    .file-row .source-path {
+      font-size: 0.85em;
+      opacity: 0.55;
+      font-family: ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
+    }
+
+    .no-results {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+      opacity: 0.5;
+      font-style: italic;
+    }
+  </style>
+
+  <!-- Primary stylesheets -->
+  <link rel="stylesheet" href="${css_core}">
+  <link rel="stylesheet" href="${css_page}">
+  ${theme_css_links}
+</head>
+<body>
+  <div class="container">
+    <!-- Header Card -->
+    <div class="header-wrapper">
+      <div class="header-card">
+        <div class="header-accent-bar"></div>
+        <div class="header-content">
+          <div class="header-title-group">
+            <div class="header-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+              Site Index
+            </div>
+            <h1 class="gradient-title">${title}</h1>
+            <p class="subtitle">${subtitle}</p>
+          </div>
+
+          <!-- Width Toggle -->
+          <button class="width-toggle" aria-label="Toggle full width" title="Toggle full width">
+            <svg class="icon-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+            </svg>
+            <svg class="icon-collapse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+            </svg>
+          </button>
+
+          <!-- Theme Toggle -->
+          <div class="theme-toggle" role="group" aria-label="Theme toggle">
+            <button class="theme-btn active" data-color-scheme="light" aria-label="Light mode" title="Light mode">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </svg>
+            </button>
+            <button class="theme-btn" data-color-scheme="dark" aria-label="Dark mode" title="Dark mode">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Theme Selector -->
+          <select id="theme-selector" class="theme-selector" aria-label="Select theme">
+            ${theme_selector_options}
+          </select>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+          ${stats_html}
+        </div>
+      </div>
+    </div>
+
+    <!-- Search + Table Section -->
+    <div class="table-wrapper">
+      <div class="table-header">
+        <div class="table-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"/>
+            <line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6"/>
+            <line x1="3" y1="12" x2="3.01" y2="12"/>
+            <line x1="3" y1="18" x2="3.01" y2="18"/>
+          </svg>
+          All Documents
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="search-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" class="search-input" id="search-input" placeholder="Search by title or path..." autocomplete="off">
+      </div>
+
+      <table id="files-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${table_rows_html}
+        </tbody>
+      </table>
+
+      <div class="no-results" id="no-results">No matching documents found.</div>
+    </div>
+    ${deleted_section_html}
+  </div>
+
+  <script>
+    // Search Functionality
+    (function() {
+      const searchInput = document.getElementById('search-input');
+      const table = document.getElementById('files-table');
+      const tbody = table.querySelector('tbody');
+      const noResults = document.getElementById('no-results');
+
+      searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        const dirHeaders = tbody.querySelectorAll('.dir-header');
+        const fileRows = tbody.querySelectorAll('.file-row');
+        let totalVisible = 0;
+
+        // First pass: show/hide file rows based on query
+        fileRows.forEach(row => {
+          if (!query) {
+            row.style.display = '';
+            totalVisible++;
+          } else {
+            const text = row.textContent.toLowerCase();
+            const match = text.includes(query);
+            row.style.display = match ? '' : 'none';
+            if (match) totalVisible++;
+          }
+        });
+
+        // Second pass: hide directory headers whose children are all hidden
+        dirHeaders.forEach(header => {
+          let nextSibling = header.nextElementSibling;
+          let hasVisible = false;
+          while (nextSibling && !nextSibling.classList.contains('dir-header')) {
+            if (nextSibling.classList.contains('file-row') && nextSibling.style.display !== 'none') {
+              hasVisible = true;
+              break;
+            }
+            nextSibling = nextSibling.nextElementSibling;
+          }
+          header.style.display = hasVisible ? '' : 'none';
+        });
+
+        noResults.style.display = totalVisible === 0 ? 'block' : 'none';
+      });
+    })();
+
+    // Width Toggle Functionality
+    (function() {
+      const widthToggle = document.querySelector('.width-toggle');
+      const html = document.documentElement;
+      const body = document.body;
+
+      const savedWidth = localStorage.getItem('page-width') || 'normal';
+      if (savedWidth === 'wide') {
+        html.setAttribute('data-width', 'wide');
+        body.classList.add('width-wide');
+      }
+
+      if (widthToggle) {
+        widthToggle.addEventListener('click', () => {
+          const isWide = html.getAttribute('data-width') === 'wide' || body.classList.contains('width-wide');
+          if (isWide) {
+            html.setAttribute('data-width', 'normal');
+            body.classList.remove('width-wide');
+            localStorage.setItem('page-width', 'normal');
+          } else {
+            html.setAttribute('data-width', 'wide');
+            body.classList.add('width-wide');
+            localStorage.setItem('page-width', 'wide');
+          }
+        });
+      }
+    })();
+
+    // Color Scheme Toggle Functionality (Light/Dark)
+    (function() {
+      const themeBtns = document.querySelectorAll('.theme-btn');
+      const html = document.documentElement;
+
+      const savedColorScheme = localStorage.getItem('color-scheme') || 'light';
+      html.setAttribute('data-color-scheme', savedColorScheme);
+      updateThemeButtons(savedColorScheme);
+
+      themeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const colorScheme = btn.getAttribute('data-color-scheme');
+          html.setAttribute('data-color-scheme', colorScheme);
+          localStorage.setItem('color-scheme', colorScheme);
+          updateThemeButtons(colorScheme);
+        });
+      });
+
+      function updateThemeButtons(activeColorScheme) {
+        themeBtns.forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-color-scheme') === activeColorScheme);
+        });
+      }
+
+      if (!localStorage.getItem('color-scheme')) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const colorScheme = prefersDark ? 'dark' : 'light';
+        html.setAttribute('data-color-scheme', colorScheme);
+        localStorage.setItem('color-scheme', colorScheme);
+        updateThemeButtons(colorScheme);
+      }
+
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('color-scheme')) {
+          const colorScheme = e.matches ? 'dark' : 'light';
+          html.setAttribute('data-color-scheme', colorScheme);
+          updateThemeButtons(colorScheme);
+        }
+      });
+    })();
+
+    // Theme Name Selector Functionality
+    (function() {
+      const themeSelector = document.getElementById('theme-selector');
+      const html = document.documentElement;
+
+      if (themeSelector) {
+        const savedThemeName = localStorage.getItem('theme-name');
+        if (savedThemeName) {
+          html.setAttribute('data-theme-name', savedThemeName);
+          themeSelector.value = savedThemeName;
+        }
+
+        themeSelector.addEventListener('change', () => {
+          const themeName = themeSelector.value;
+          html.setAttribute('data-theme-name', themeName);
+          localStorage.setItem('theme-name', themeName);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

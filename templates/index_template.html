@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" data-theme-name="${default_theme}" data-page-type="index">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${title}</title>
+  
+  <!-- Fallback styles for graceful degradation -->
+  <style>
+    :root { --fb-bg: #faf9f7; --fb-text: #1a1a1a; }
+    [data-color-scheme="dark"] { --fb-bg: #0a0a0b; --fb-text: #fafafa; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--fb-bg); color: var(--fb-text); line-height: 1.6; margin: 0; padding: 20px; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+    th { background: #f5f5f5; font-weight: 600; }
+    a { color: #6366f1; text-decoration: none; }
+  </style>
+  
+  <!-- Primary stylesheets -->
+  <link rel="stylesheet" href="${css_core}">
+  <link rel="stylesheet" href="${css_page}">
+  ${theme_css_links}
+</head>
+<body>
+  <div class="container">
+    <!-- Header Card -->
+    <div class="header-wrapper">
+      <div class="header-card">
+        <div class="header-accent-bar"></div>
+        <div class="header-content">
+          <div class="header-title-group">
+            <div class="header-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+              ${badge_text}
+            </div>
+            <h1 class="gradient-title">${title}</h1>
+            <p class="subtitle">${subtitle}</p>
+          </div>
+          
+          <!-- Width Toggle -->
+          <button class="width-toggle" aria-label="Toggle full width" title="Toggle full width">
+            <svg class="icon-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+            </svg>
+            <svg class="icon-collapse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+            </svg>
+          </button>
+          
+          <!-- Theme Toggle -->
+          <div class="theme-toggle" role="group" aria-label="Theme toggle">
+            <button class="theme-btn active" data-color-scheme="light" aria-label="Light mode" title="Light mode">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </svg>
+            </button>
+            <button class="theme-btn" data-color-scheme="dark" aria-label="Dark mode" title="Dark mode">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            </button>
+          </div>
+          
+          <!-- Theme Selector -->
+          <select id="theme-selector" class="theme-selector" aria-label="Select theme">
+            ${theme_selector_options}
+          </select>
+        </div>
+        
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+          ${stats_html}
+        </div>
+      </div>
+    </div>
+    
+    <!-- Table Section -->
+    <div class="table-wrapper">
+      <div class="table-header">
+        <div class="table-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"/>
+            <line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6"/>
+            <line x1="3" y1="12" x2="3.01" y2="12"/>
+            <line x1="3" y1="18" x2="3.01" y2="18"/>
+          </svg>
+          All Notes
+        </div>
+        <div class="last-updated">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          ${last_updated}
+        </div>
+      </div>
+      
+      <table>
+        <thead>${table_header_html}</thead>
+        <tbody>${table_rows_html}</tbody>
+      </table>
+    </div>
+  </div>
+  
+  <script>
+    // Width Toggle Functionality
+    (function() {
+      const widthToggle = document.querySelector('.width-toggle');
+      const html = document.documentElement;
+      const body = document.body;
+      
+      // Check for saved width preference
+      const savedWidth = localStorage.getItem('page-width') || 'normal';
+      if (savedWidth === 'wide') {
+        html.setAttribute('data-width', 'wide');
+        body.classList.add('width-wide');
+      }
+      
+      if (widthToggle) {
+        widthToggle.addEventListener('click', () => {
+          const isWide = html.getAttribute('data-width') === 'wide' || body.classList.contains('width-wide');
+          if (isWide) {
+            html.setAttribute('data-width', 'normal');
+            body.classList.remove('width-wide');
+            localStorage.setItem('page-width', 'normal');
+          } else {
+            html.setAttribute('data-width', 'wide');
+            body.classList.add('width-wide');
+            localStorage.setItem('page-width', 'wide');
+          }
+        });
+      }
+    })();
+    
+    // Color Scheme Toggle Functionality (Light/Dark)
+    (function() {
+      const themeBtns = document.querySelectorAll('.theme-btn');
+      const html = document.documentElement;
+      
+      // Check for saved color scheme preference or default to light
+      const savedColorScheme = localStorage.getItem('color-scheme') || 'light';
+      html.setAttribute('data-color-scheme', savedColorScheme);
+      updateThemeButtons(savedColorScheme);
+      
+      themeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const colorScheme = btn.getAttribute('data-color-scheme');
+          html.setAttribute('data-color-scheme', colorScheme);
+          localStorage.setItem('color-scheme', colorScheme);
+          updateThemeButtons(colorScheme);
+        });
+      });
+      
+      function updateThemeButtons(activeColorScheme) {
+        themeBtns.forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-color-scheme') === activeColorScheme);
+        });
+      }
+      
+      // Check system preference on load if no saved preference
+      if (!localStorage.getItem('color-scheme')) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const colorScheme = prefersDark ? 'dark' : 'light';
+        html.setAttribute('data-color-scheme', colorScheme);
+        localStorage.setItem('color-scheme', colorScheme);
+        updateThemeButtons(colorScheme);
+      }
+      
+      // Listen for system theme changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('color-scheme')) {
+          const colorScheme = e.matches ? 'dark' : 'light';
+          html.setAttribute('data-color-scheme', colorScheme);
+          updateThemeButtons(colorScheme);
+        }
+      });
+    })();
+    
+    // Theme Name Selector Functionality
+    (function() {
+      const themeSelector = document.getElementById('theme-selector');
+      const html = document.documentElement;
+      
+      if (themeSelector) {
+        // Check for saved theme name preference
+        const savedThemeName = localStorage.getItem('theme-name');
+        if (savedThemeName) {
+          html.setAttribute('data-theme-name', savedThemeName);
+          themeSelector.value = savedThemeName;
+        }
+        
+        // Handle theme selection change
+        themeSelector.addEventListener('change', () => {
+          const themeName = themeSelector.value;
+          html.setAttribute('data-theme-name', themeName);
+          localStorage.setItem('theme-name', themeName);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
