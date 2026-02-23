@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import pathlib
 import re
 import shutil
@@ -19,6 +20,55 @@ TOOLS_DIR = pathlib.Path(__file__).parent.resolve()
 TEMPLATES_DIR = TOOLS_DIR / "templates"
 STYLES_SRC_DIR = TOOLS_DIR / "styles"
 THEMES_CONFIG_PATH = TOOLS_DIR / "themes.json"
+
+log = logging.getLogger("makeweb")
+
+
+def _setup_logging(log_dir: Optional[pathlib.Path] = None) -> None:
+    """Configure the *makeweb* logger.
+
+    A StreamHandler (console) is always added.  When *log_dir* is provided a
+    FileHandler is added that writes to ``log_dir/makeweb.log``.
+    """
+    if log.handlers:
+        return  # already configured
+
+    log.setLevel(logging.DEBUG)
+
+    # Console: plain messages (matches previous print output)
+    console = logging.StreamHandler(sys.stdout)
+    console.setLevel(logging.INFO)
+    console.setFormatter(logging.Formatter("%(message)s"))
+    log.addHandler(console)
+
+    # File: timestamped entries
+    if log_dir is not None:
+        log_dir.mkdir(parents=True, exist_ok=True)
+        fh = logging.FileHandler(log_dir / "makeweb.log", encoding="utf-8")
+        fh.setLevel(logging.DEBUG)
+        fh.setFormatter(logging.Formatter("%(asctime)s | %(levelname)s | %(message)s",
+                                          datefmt="%Y-%m-%d %H:%M:%S"))
+        log.addHandler(fh)
+
+
+def _read_text(path: pathlib.Path) -> str:
+    """Read a text file, handling UTF-8, UTF-8 with BOM, UTF-16, and legacy encodings."""
+    raw = path.read_bytes()
+    # UTF-16 LE/BE BOM
+    if raw[:2] in (b"\xff\xfe", b"\xfe\xff"):
+        return raw.decode("utf-16")
+    # UTF-8 (with or without BOM)
+    try:
+        return raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        pass
+    # Windows-1252
+    try:
+        return raw.decode("cp1252")
+    except UnicodeDecodeError:
+        pass
+    # Latin-1 never fails (maps every byte 0x00–0xFF)
+    return raw.decode("latin-1")
 
 
 def _infer_title(markdown_text: str, fallback: str) -> str:
@@ -39,6 +89,15 @@ def _extract_title_from_html(html_path: pathlib.Path) -> str:
     except (OSError, UnicodeDecodeError):
         pass
     return html_path.stem
+
+
+def _retarget_external_links(html: str) -> str:
+    """Add target="_blank" rel="noopener noreferrer" to external links."""
+    return re.sub(
+        r'<a\s([^>]*href="https?://)',
+        r'<a target="_blank" rel="noopener noreferrer" \1',
+        html,
+    )
 
 
 def _load_markdown_converter():
@@ -94,9 +153,9 @@ def validate_paths() -> bool:
             errors.append(f"Required CSS file not found: {css_path}")
 
     if errors:
-        print("Error: Missing required files/directories:", file=sys.stderr)
+        log.error("Missing required files/directories:")
         for error in errors:
-            print(f"  - {error}", file=sys.stderr)
+            log.error("  - %s", error)
         return False
 
     return True
@@ -467,6 +526,105 @@ def _build_standalone_html(
 </html>"""
 
 
+def _build_sidebar_tree_html(groups: dict) -> str:
+    """Build a collapsible directory tree for the index sidebar."""
+    folder_svg = (
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'
+        '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>'
+        '</svg>'
+    )
+    chevron_svg = (
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'
+        '<polyline points="9 18 15 12 9 6"/>'
+        '</svg>'
+    )
+
+    # Build tree from non-root directory paths
+    tree: dict = {}
+    for d in groups:
+        if d == ".":
+            continue
+        parts = d.split("/")
+        node = tree
+        for part in parts:
+            node = node.setdefault(part, {})
+
+    group_keys = set(groups.keys())
+
+    def _render(node: dict, parent_path: str) -> str:
+        parts: list[str] = []
+        for name in sorted(node.keys(), key=str.lower):
+            full_path = f"{parent_path}/{name}" if parent_path else name
+            children = node[name]
+            has_children = bool(children)
+            has_files = full_path in group_keys
+            dir_slug = re.sub(r'[^a-zA-Z0-9]+', '-', full_path).strip('-').lower()
+
+            parts.append('<div class="dir-node">')
+            parts.append('<div class="dir-node-row">')
+
+            if has_children:
+                parts.append(f'<span class="dir-toggle">{chevron_svg}</span>')
+            else:
+                parts.append('<span class="dir-toggle-spacer"></span>')
+
+            if has_files:
+                file_count = len(groups[full_path])
+                parts.append(
+                    f'<a href="#dir-{dir_slug}" class="dir-link">{folder_svg}{name}'
+                    f'<span class="dir-count">{file_count}</span></a>'
+                )
+            else:
+                parts.append(
+                    f'<span class="dir-label">{folder_svg}{name}</span>'
+                )
+
+            parts.append('</div>')  # close dir-node-row
+
+            if has_children:
+                parts.append('<div class="dir-children">')
+                parts.append(_render(children, full_path))
+                parts.append('</div>')
+
+            parts.append('</div>')  # close dir-node
+
+        return "\n".join(parts)
+
+    # Assemble sidebar nav
+    lines = [
+        '<nav class="dir-sidebar-nav">',
+        '<div class="dir-sidebar-header">',
+        '<div class="dir-sidebar-title">Directories</div>',
+        '<div class="dir-sidebar-actions">',
+        '<button class="dir-action-btn" id="dir-expand-all" title="Expand all">'
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'
+        '<polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/>'
+        '</svg></button>',
+        '<button class="dir-action-btn" id="dir-collapse-all" title="Collapse all">'
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'
+        '<polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/>'
+        '</svg></button>',
+        '</div></div>',
+        '<div class="dir-tree">',
+    ]
+
+    # Root entry if present
+    if "." in group_keys:
+        root_count = len(groups["."])
+        lines.append(
+            '<div class="dir-node"><div class="dir-node-row">'
+            '<span class="dir-toggle-spacer"></span>'
+            f'<a href="#dir-root" class="dir-link">{folder_svg}Root'
+            f'<span class="dir-count">{root_count}</span></a>'
+            '</div></div>'
+        )
+
+    lines.append(_render(tree, ""))
+    lines.append('</div>')
+    lines.append('</nav>')
+    return "\n".join(lines)
+
+
 def _build_site_index(
     entries: List[dict],
     output_path: pathlib.Path,
@@ -497,8 +655,9 @@ def _build_site_index(
     rows: list[str] = []
     for directory, files in groups.items():
         display_dir = directory if directory != "." else "Root"
+        dir_slug = re.sub(r'[^a-zA-Z0-9]+', '-', directory).strip('-').lower() or "root"
         rows.append(
-            f'<tr class="dir-header">'
+            f'<tr class="dir-header" id="dir-{dir_slug}">'
             f'<td colspan="2">'
             f'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'
             f'<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>'
@@ -510,13 +669,6 @@ def _build_site_index(
             rows.append(
                 f'<tr class="file-row">'
                 f'<td>'
-                f'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'
-                f'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>'
-                f'<polyline points="14 2 14 8 20 8"/>'
-                f'<line x1="16" y1="13" x2="8" y2="13"/>'
-                f'<line x1="16" y1="17" x2="8" y2="17"/>'
-                f'<polyline points="10 9 9 9 8 9"/>'
-                f'</svg>'
                 f'<a href="{entry["html_rel_path"]}">{entry["title"]}</a>'
                 f'</td>'
                 f'<td><span class="source-path">{entry["source_rel_path"]}</span></td>'
@@ -576,10 +728,6 @@ def _build_site_index(
                 del_rows.append(
                     f'<tr class="file-row">'
                     f'<td>'
-                    f'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'
-                    f'<polyline points="3 6 5 6 21 6"/>'
-                    f'<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>'
-                    f'</svg>'
                     f'<a href="{entry["html_rel_path"]}">{entry["title"]}</a>'
                     f'</td>'
                     f'<td><span class="source-path">source deleted</span></td>'
@@ -612,6 +760,9 @@ def _build_site_index(
             '    </div>'
         )
 
+    # Build directory sidebar HTML
+    dir_sidebar_html = _build_sidebar_tree_html(groups)
+
     template_vars = {
         "title": "Site Index",
         "subtitle": "Auto-generated document index",
@@ -623,6 +774,7 @@ def _build_site_index(
         "stats_html": stats_html,
         "table_rows_html": "\n          ".join(rows),
         "deleted_section_html": deleted_section_html,
+        "dir_sidebar_html": dir_sidebar_html,
     }
 
     output_path.write_text(template.safe_substitute(template_vars), encoding="utf-8")
@@ -637,6 +789,8 @@ def build_site(force: bool = False) -> int:
     scan_dir = pathlib.Path(".")
     output_dir = scan_dir / "html"
     output_dir.mkdir(exist_ok=True)
+
+    _setup_logging(log_dir=output_dir)
 
     # Copy styles into output dir
     styles_dest = output_dir / "styles"
@@ -661,14 +815,14 @@ def build_site(force: bool = False) -> int:
         md_files.append(md_path)
 
     if not md_files:
-        print("No .md files found in current directory.", file=sys.stderr)
+        log.error("No .md files found in current directory.")
         return 1
 
     try:
         # Test that markdown library is available
         _load_markdown_converter()
     except RuntimeError as exc:
-        print(str(exc), file=sys.stderr)
+        log.error("%s", exc)
         return 1
 
     entries: List[dict] = []
@@ -677,7 +831,7 @@ def build_site(force: bool = False) -> int:
 
     for md_path in sorted(md_files):
         # --- cheap metadata (always) ---
-        markdown_text = md_path.read_text(encoding="utf-8")
+        markdown_text = _read_text(md_path)
         title = _infer_title(markdown_text, md_path.stem)
 
         # Mirror source structure inside html/
@@ -710,7 +864,7 @@ def build_site(force: bool = False) -> int:
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
         md = _load_markdown_converter()
-        body_html = md.convert(markdown_text)
+        body_html = _retarget_external_links(md.convert(markdown_text))
         toc_html = md.toc  # type: ignore[attr-defined]
 
         depth_from_root = len(output_path.parent.relative_to(scan_dir).parts)
@@ -730,7 +884,7 @@ def build_site(force: bool = False) -> int:
         output_path.write_text(html_content, encoding="utf-8")
         converted += 1
 
-        print(f"  Converted: {source_rel} -> {html_rel}")
+        log.info("  Converted: %s -> %s", source_rel, html_rel)
 
     # --- orphan detection ---
     expected_html = {e["html_rel_path"] for e in entries}
@@ -762,7 +916,7 @@ def build_site(force: bool = False) -> int:
                 "html_rel_path": rel,
                 "directory": directory,
             })
-            print(f"  Orphan: {rel} ({orphan_title})")
+            log.warning("  Orphan: %s (%s)", rel, orphan_title)
 
     # Generate site index at scan root
     index_path = scan_dir / "index.html"
@@ -772,13 +926,15 @@ def build_site(force: bool = False) -> int:
     # Summary
     total = len(entries)
     if orphan_entries:
-        print(f"\n  Found {len(orphan_entries)} orphaned HTML file{'s' if len(orphan_entries) != 1 else ''} (source .md deleted)")
+        log.warning("\n  Found %d orphaned HTML file%s (source .md deleted)",
+                    len(orphan_entries), "s" if len(orphan_entries) != 1 else "")
 
-    print(f"\nBuild complete: {converted} converted, {skipped} up-to-date, {total} total file{'s' if total != 1 else ''}.")
+    log.info("\nBuild complete: %d converted, %d up-to-date, %d total file%s.",
+             converted, skipped, total, "s" if total != 1 else "")
     if orphan_entries:
-        print(f"  Orphans: {len(orphan_entries)} (listed in Deleted Files section of index)")
-    print(f"  Index: {index_path}")
-    print(f"  HTML:  {output_dir}/")
+        log.info("  Orphans: %d (listed in Deleted Files section of index)", len(orphan_entries))
+    log.info("  Index: %s", index_path)
+    log.info("  HTML:  %s/", output_dir)
     return 0
 
 
@@ -839,21 +995,24 @@ def main() -> int:
     if not args.input:
         parser.error("the following arguments are required: input (or use --buildsite)")
 
+    # Single-file mode: console logging only (no log file)
+    _setup_logging()
+
     input_path = pathlib.Path(args.input)
     if not input_path.exists():
-        print(f"Input file not found: {input_path}", file=sys.stderr)
+        log.error("Input file not found: %s", input_path)
         return 1
 
-    markdown_text = input_path.read_text(encoding="utf-8")
+    markdown_text = _read_text(input_path)
     title = _infer_title(markdown_text, input_path.stem)
 
     try:
         md = _load_markdown_converter()
     except RuntimeError as exc:
-        print(str(exc), file=sys.stderr)
+        log.error("%s", exc)
         return 1
 
-    body_html = md.convert(markdown_text)
+    body_html = _retarget_external_links(md.convert(markdown_text))
     toc_html = None if args.no_toc else md.toc  # type: ignore[attr-defined]
 
     output_path = pathlib.Path(args.output) if args.output else input_path.with_suffix(".html")
@@ -875,11 +1034,11 @@ def main() -> int:
 
     output_path.write_text(html_content, encoding="utf-8")
 
-    print(f"Wrote: {output_path}")
+    log.info("Wrote: %s", output_path)
     if args.standalone:
-        print("  (Standalone mode - CSS inlined)")
+        log.info("  (Standalone mode - CSS inlined)")
     else:
-        print(f"  Styles copied to: {output_path.parent / 'styles'}")
+        log.info("  Styles copied to: %s", output_path.parent / "styles")
     return 0
 
 

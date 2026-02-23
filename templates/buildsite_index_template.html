@@ -49,26 +49,19 @@
       padding-top: 1.2rem;
       padding-bottom: 0.5rem;
       border-bottom: 2px solid var(--border-color, #ddd);
-      font-size: 0.9rem;
+      font-size: 1.05rem;
       text-transform: uppercase;
       letter-spacing: 0.03em;
       opacity: 0.7;
     }
     .dir-header td svg {
-      width: 1em;
-      height: 1em;
+      width: 1.2em;
+      height: 1.2em;
       vertical-align: -0.15em;
       margin-right: 0.3em;
     }
 
     /* File rows */
-    .file-row td svg {
-      width: 1em;
-      height: 1em;
-      vertical-align: -0.15em;
-      margin-right: 0.4em;
-      opacity: 0.5;
-    }
     .file-row .source-path {
       font-size: 0.85em;
       opacity: 0.55;
@@ -152,49 +145,107 @@
       </div>
     </div>
 
-    <!-- Search + Table Section -->
-    <div class="table-wrapper">
-      <div class="table-header">
-        <div class="table-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="8" y1="6" x2="21" y2="6"/>
-            <line x1="8" y1="12" x2="21" y2="12"/>
-            <line x1="8" y1="18" x2="21" y2="18"/>
-            <line x1="3" y1="6" x2="3.01" y2="6"/>
-            <line x1="3" y1="12" x2="3.01" y2="12"/>
-            <line x1="3" y1="18" x2="3.01" y2="18"/>
-          </svg>
-          All Documents
+    <!-- Index Layout: Sidebar + Main Content -->
+    <div class="index-layout">
+      <aside class="dir-sidebar">
+        ${dir_sidebar_html}
+      </aside>
+      <div class="index-main">
+        <!-- Search + Table Section -->
+        <div class="table-wrapper">
+          <div class="table-header">
+            <div class="table-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"/>
+                <line x1="8" y1="12" x2="21" y2="12"/>
+                <line x1="8" y1="18" x2="21" y2="18"/>
+                <line x1="3" y1="6" x2="3.01" y2="6"/>
+                <line x1="3" y1="12" x2="3.01" y2="12"/>
+                <line x1="3" y1="18" x2="3.01" y2="18"/>
+              </svg>
+              All Documents
+            </div>
+          </div>
+
+          <!-- Search Bar -->
+          <div class="search-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" class="search-input" id="search-input" placeholder="Search by title or path..." autocomplete="off">
+          </div>
+
+          <table id="files-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Source</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${table_rows_html}
+            </tbody>
+          </table>
+
+          <div class="no-results" id="no-results">No matching documents found.</div>
         </div>
+        ${deleted_section_html}
       </div>
-
-      <!-- Search Bar -->
-      <div class="search-wrapper">
-        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <input type="text" class="search-input" id="search-input" placeholder="Search by title or path..." autocomplete="off">
-      </div>
-
-      <table id="files-table">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Source</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${table_rows_html}
-        </tbody>
-      </table>
-
-      <div class="no-results" id="no-results">No matching documents found.</div>
     </div>
-    ${deleted_section_html}
   </div>
 
   <script>
+    // Directory Sidebar: Toggle, Active State, Label-as-Toggle
+    (function() {
+      // Chevron toggles expand/collapse
+      document.querySelectorAll('.dir-toggle').forEach(function(toggle) {
+        toggle.addEventListener('click', function() {
+          this.closest('.dir-node').classList.toggle('expanded');
+        });
+      });
+
+      // Non-link labels also toggle expand/collapse
+      document.querySelectorAll('.dir-label').forEach(function(label) {
+        label.addEventListener('click', function() {
+          this.closest('.dir-node').classList.toggle('expanded');
+        });
+      });
+
+      // Expand all / Collapse all
+      var expandBtn = document.getElementById('dir-expand-all');
+      var collapseBtn = document.getElementById('dir-collapse-all');
+      if (expandBtn) {
+        expandBtn.addEventListener('click', function() {
+          document.querySelectorAll('.dir-sidebar .dir-node').forEach(function(n) {
+            n.classList.add('expanded');
+          });
+        });
+      }
+      if (collapseBtn) {
+        collapseBtn.addEventListener('click', function() {
+          document.querySelectorAll('.dir-sidebar .dir-node').forEach(function(n) {
+            n.classList.remove('expanded');
+          });
+        });
+      }
+
+      // Active state + auto-expand ancestors on link click
+      var dirLinks = document.querySelectorAll('.dir-sidebar .dir-link');
+      dirLinks.forEach(function(link) {
+        link.addEventListener('click', function() {
+          dirLinks.forEach(function(l) { l.classList.remove('active'); });
+          this.classList.add('active');
+          // Expand all ancestor nodes so the active item stays visible
+          var parent = this.closest('.dir-children');
+          while (parent) {
+            parent.parentElement.classList.add('expanded');
+            parent = parent.parentElement.closest('.dir-children');
+          }
+        });
+      });
+    })();
+
     // Search Functionality
     (function() {
       const searchInput = document.getElementById('search-input');
